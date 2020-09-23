@@ -648,6 +648,12 @@ void failstats_reset_print()
 #endif
 }
 
+void softReset()
+{
+    cli();
+    wdt_enable(WDTO_15MS);
+    while(1);
+}
 
 
 #ifdef MESH_BED_LEVELING
@@ -762,6 +768,7 @@ static void factory_reset(char level)
 				}
 
 			}
+			softReset();
 
 
 			break;
@@ -3813,9 +3820,7 @@ void process_commands()
 #if (defined(WATCHDOG) && (MOTHERBOARD == BOARD_EINSY_1_0a))
                 boot_app_magic = BOOT_APP_MAGIC;
                 boot_app_flags = BOOT_APP_FLG_RUN;
-				wdt_enable(WDTO_15MS);
-				cli();
-				while(1);
+                softReset();
 #else //WATCHDOG
                 asm volatile("jmp 0x3E000");
 #endif //WATCHDOG
@@ -8570,7 +8575,7 @@ Sigma_Exit:
 	break;
 
     /*!
-	### M999 - Restart after being stopped <a href="https://reprap.org/wiki/G-code#M999:_Restart_after_being_stopped_by_error">M999: Restart after being stopped by error</a>
+    ### M999 - Restart after being stopped <a href="https://reprap.org/wiki/G-code#M999:_Restart_after_being_stopped_by_error">M999: Restart after being stopped by error</a>
     @todo Usually doesn't work. Should be fixed or removed. Most of the time, if `Stopped` it set, the print fails and is unrecoverable.
     */
     case 999:
@@ -11715,7 +11720,6 @@ void disable_force_z()
     tmc2130_init(true);
 #endif // TMC2130
 }
-
 
 void enable_force_z()
 {
