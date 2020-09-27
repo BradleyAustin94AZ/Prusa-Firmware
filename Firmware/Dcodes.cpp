@@ -1,5 +1,5 @@
 #include "Dcodes.h"
-#include "Marlin.h"
+//#include "Marlin.h"
 #include "Configuration.h"
 #include "language.h"
 #include "cmdqueue.h"
@@ -226,7 +226,9 @@ void dcode_0()
 	LOG("D0 - Reset\n");
 	if (code_seen('B')) //bootloader
 	{
-		softReset();
+		cli();
+		wdt_enable(WDTO_15MS);
+		while(1);
 	}
 	else //reset
 	{
@@ -250,7 +252,8 @@ void dcode_1()
 	cli();
 	for (int i = 0; i < 8192; i++)
 		eeprom_write_byte((unsigned char*)i, (unsigned char)0xff);
-	softReset();
+	wdt_enable(WDTO_15MS);
+	while(1);
 }
 
     /*!
@@ -417,7 +420,8 @@ void dcode_5()
 		boot_dst_addr = (uint32_t)address;
 		boot_src_addr = (uint32_t)(&data);
 		bootapp_print_vars();
-		softReset();
+		wdt_enable(WDTO_15MS);
+		while(1);
 	}
 	while (count)
 	{
@@ -463,7 +467,8 @@ void dcode_7()
 	boot_copy_size = (uint16_t)0xc00;
 	boot_src_addr = (uint32_t)0x0003e400;
 	boot_dst_addr = (uint32_t)0x0003f400;
-	softReset();
+	wdt_enable(WDTO_15MS);
+	while(1);
 */
 }
 
